@@ -193,6 +193,7 @@ class KafkaClient(object):
         self._bootstrap_fails = 0
         self._wake_r, self._wake_w = socket.socketpair()
         self._wake_r.setblocking(False)
+        self._wake_w.settimeout(self.configs['request_timeout_ms'])
         self._wake_lock = threading.Lock()
         self._selector.register(self._wake_r, selectors.EVENT_READ)
         self._closed = False
