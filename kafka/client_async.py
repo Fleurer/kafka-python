@@ -135,6 +135,7 @@ class KafkaClient(object):
         'bootstrap_servers': 'localhost',
         'client_id': 'kafka-python-' + __version__,
         'request_timeout_ms': 40000,
+        'max_block_ms': 60000,
         'reconnect_backoff_ms': 50,
         'max_in_flight_requests_per_connection': 5,
         'receive_buffer_bytes': None,
@@ -193,6 +194,7 @@ class KafkaClient(object):
         self._bootstrap_fails = 0
         self._wake_r, self._wake_w = socket.socketpair()
         self._wake_r.setblocking(False)
+        self._wake_w.settimeout(self.config['max_block_ms'] / 1000.0)
         self._wake_lock = threading.Lock()
         self._selector.register(self._wake_r, selectors.EVENT_READ)
         self._closed = False
